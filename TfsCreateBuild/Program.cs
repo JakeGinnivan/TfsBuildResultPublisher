@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Xml.Linq;
 using Microsoft.TeamFoundation.Build.Client;
 using Microsoft.TeamFoundation.Client;
 using NDesk.Options;
@@ -27,6 +31,12 @@ namespace TfsCreateBuild
         private static string _buildController;
         private static DateTime? _startTime;
         private static DateTime? _finishTime;
+        private static bool _publishTestRun;
+        private static int? _testSuiteId;
+        private static int? _testConfigId;
+        private static string _testRunTitle;
+        private static string _testRunResultOwner;
+        private static bool _fixTestIds;
 
         static void Main(string[] args)
         {
@@ -49,6 +59,12 @@ namespace TfsCreateBuild
                     {"testResults=", @"Test results file to publish (*.trx, requires MSTest installed)", v => _testResults = v},
                     {"create", "Should the build definition be created if it does not exist", v => _createBuildDefinitionIfNotExists = (v != null)},
                     {"buildController=", @"The name of the build controller to use when creating the build definition (default, first controller)", v => _buildController = v},
+                    {"publishTestRun", @"Creates a test run in Test Manager (requires tcm.exe installed)", v => _publishTestRun = (v != null)},
+                    {"fixTestIds", @"If the .trx file comes from VSTest.Console.exe, the testId's will not be recognised by Test Runs (for associated automation)", v => _fixTestIds = (v != null)},
+                    {"testSuiteId=", @"The Test Suite to publish the results of the test run to [tcm /suiteId]", v => _testSuiteId = int.Parse(v)},
+                    {"testConfigid=", @"The Test Configuration to publish the results of the test run to [tcm /configId]", v => _testConfigId = int.Parse(v)},
+                    {"testRunTitle=", @"The title of the test run [tcm /title]", v => _testRunTitle = v},
+                    {"testRunResultOwner=", @"The result owner of the test run [tcm /resultOwner]", v => _testRunResultOwner = v},
                 };
 
             try
@@ -116,10 +132,75 @@ namespace TfsCreateBuild
             buildDetail.FinalizeStatus(buildStatus);
 
             if (!string.IsNullOrEmpty(_testResults) && File.Exists(_testResults))
-                PublishTestResults(_testResults);
+                PublishTestResults();
+
+            if (_publishTestRun)
+                PublishTestRun();
         }
 
-        private static void PublishTestResults(string testResults)
+        private static void PublishTestRun()
+        {
+            if (_testSuiteId == null)
+                throw new ArgumentException("/testSuiteId must be specified when publishing test results");
+            if (_testConfigId == null)
+                throw new ArgumentException("/testConfigId must be specified when publishing test results");
+
+            if (_fixTestIds)
+                FixTestIdsInTrx();
+
+            var paths = new[]
+                {
+                    @"C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\TCM.exe",
+                    @"C:\Program Files\Microsoft Visual Studio 11.0\Common7\IDE\TCM.exe"
+                };
+            var tcm = File.Exists(paths[0]) ? paths[0] : paths[1];
+
+            const string argsFormat = "run /publish /suiteid:{0} /configid:{1} " +
+                                      "/resultsfile:\"{2}\" " +
+                                      "/collection:\"{3}\" /teamproject:\"{4}\" " +
+                                      "/build:\"{5}\" /builddefinition:\"{6}\" /resultowner:\"{7}\"";
+            var args = string.Format(argsFormat, _collection, _testSuiteId, _testConfigId, _testResults, _project,
+                                     _buildNumber, _buildDefinition, _testRunResultOwner ?? Environment.UserName);
+
+            //Optionally override title
+            if (!string.IsNullOrEmpty(_testRunTitle))
+                args += " /title " + _testRunTitle;
+
+            Process.Start(tcm, args);
+        }
+
+        private static void FixTestIdsInTrx()
+        {
+            const string ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
+            var trx = File.ReadAllText(_testResults);
+
+            var replaceList = new Dictionary<Guid, Guid>();
+
+            var doc = XDocument.Load(_testResults);
+            var unitTests = doc.Descendants(XName.Get("TestRun", ns)).Descendants(XName.Get("TestDefinitions", ns)).Single().Descendants(XName.Get("UnitTest", ns));
+            foreach (var unitTest in unitTests)
+            {
+                var testMethod = unitTest.Descendants(XName.Get("TestMethod", ns)).Single();
+                var className = testMethod.Attribute("className");
+                var name = testMethod.Attribute("name");
+                var id = new Guid(unitTest.Attribute("id").Value);
+                replaceList.Add(id, CalcProperGuid(className.Value + "." + name.Value));
+            }
+
+            trx = replaceList.Aggregate(trx, (current, replacement) => current.Replace(replacement.Key.ToString(), replacement.Value.ToString()));
+
+            File.WriteAllText(_testResults, trx);
+        }
+
+        static Guid CalcProperGuid(string testName)
+        {
+            var crypto = new SHA1CryptoServiceProvider();
+            var bytes = new byte[16];
+            Array.Copy(crypto.ComputeHash(Encoding.Unicode.GetBytes(testName)), bytes, bytes.Length);
+            return new Guid(bytes);
+        }
+
+        private static void PublishTestResults()
         {
             var paths = new[]
                 {
@@ -128,7 +209,7 @@ namespace TfsCreateBuild
                 };
             var msTest = File.Exists(paths[0]) ? paths[0] : paths[1];
             const string argsFormat = "/publish:\"{0}\" /publishresultsfile:\"{1}\" /teamproject:\"{2}\" /publishbuild:\"{3}\" /platform:\"{4}\" /flavor:\"{5}\"";
-            var args = string.Format(argsFormat, _collection, testResults, _project, _buildNumber, _buildPlatform, _buildFlavor);
+            var args = string.Format(argsFormat, _collection, _testResults, _project, _buildNumber, _buildPlatform, _buildFlavor);
 
             Process.Start(msTest, args);
         }

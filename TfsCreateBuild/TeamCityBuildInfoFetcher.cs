@@ -41,8 +41,9 @@ namespace TfsCreateBuild
                         Console.WriteLine(ex.ToString());
                         Console.WriteLine();
                         Console.WriteLine("Content:");
-                        Console.WriteLine(response.Content.ReadAsStringAsync());
+                        Console.WriteLine(response.Content.ReadAsStringAsync().Result);
                         Console.WriteLine();
+                        throw;
                     }
                 }
             }

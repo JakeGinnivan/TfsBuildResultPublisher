@@ -2,9 +2,9 @@
 {
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
-            new BuildCreator().CreateBuild(args);
+            return new BuildCreator().CreateBuild(args);
         }
     }
 }

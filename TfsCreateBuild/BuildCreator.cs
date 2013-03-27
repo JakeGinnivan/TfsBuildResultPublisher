@@ -13,7 +13,7 @@ namespace TfsCreateBuild
         private readonly TeamCityBuildInfoFetcher _teamCityBuildInfoFetcher = new TeamCityBuildInfoFetcher();
         private readonly Configuration _configuration = new Configuration();
 
-        public void CreateBuild(string[] args)
+        public int CreateBuild(string[] args)
         {
             var p = new OptionSet
                 {
@@ -51,7 +51,7 @@ namespace TfsCreateBuild
             catch (OptionException)
             {
                 ShowHelp(p);
-                return;
+                return 1;
             }
 
             if (!string.IsNullOrEmpty(_configuration.TeamCityBuildId))
@@ -60,11 +60,12 @@ namespace TfsCreateBuild
             if (string.IsNullOrEmpty(_configuration.Collection) || string.IsNullOrEmpty(_configuration.Project) || string.IsNullOrEmpty(_configuration.BuildDefinition) || string.IsNullOrEmpty(_configuration.BuildNumber))
             {
                 ShowHelp(p);
-                return;
+                return 1;
             }
 
             AddBuild(_configuration.Collection, _configuration.Project, _configuration.BuildDefinition, _configuration.BuildNumber, _configuration);
             Console.WriteLine("Build added.");
+            return 0;
         }
 
         void ShowHelp(OptionSet p)

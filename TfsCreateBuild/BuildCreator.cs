@@ -21,7 +21,8 @@ namespace TfsCreateBuild
                     {"p|project=", "The team project", v => _configuration.Project = v},
                     {"b|builddefinition=", "The build definition", v => _configuration.BuildDefinition = v},
                     {"n|buildnumber=", "The build number to assign the build", v => _configuration.BuildNumber = v},
-                    {"teamcity=", "Publish a teamcity build to TFS", v => _configuration.TeamcityBuildId = v},
+                    {"teamcityBuildId=", "The TeamCity build id to take startTime, endTime, buildnumber from", v => _configuration.TeamCityBuildId = v},
+                    {"teamcityServer=", "Url of your teamcity server", v => _configuration.TeamCityServerAddress = v},
                     {"s|status=", "Status of the build  (Succeeded, Failed, Stopped, PartiallySucceeded, default: Succeeded)", v => _configuration.BuildStatus = v},
                     {"f|flavor=", "Flavor of the build (to track test results against, default: Debug)", v => _configuration.BuildFlavor = v},
                     {"l|platform=", "Platform of the build (to track test results against, AnyCPU)", v => _configuration.BuildPlatform = v},
@@ -53,7 +54,7 @@ namespace TfsCreateBuild
                 return;
             }
 
-            if (!string.IsNullOrEmpty(_configuration.TeamcityBuildId))
+            if (!string.IsNullOrEmpty(_configuration.TeamCityBuildId))
                 _teamCityBuildInfoFetcher.UpdateConfigurationFromTeamCityBuild(_configuration);
 
             if (string.IsNullOrEmpty(_configuration.Collection) || string.IsNullOrEmpty(_configuration.Project) || string.IsNullOrEmpty(_configuration.BuildDefinition) || string.IsNullOrEmpty(_configuration.BuildNumber))

@@ -14,12 +14,11 @@ namespace TfsCreateBuild
 
             var userName = Environment.GetEnvironmentVariable("teamcity.auth.userId", EnvironmentVariableTarget.User);
             var password = Environment.GetEnvironmentVariable("teamcity.auth.password", EnvironmentVariableTarget.User);
-            var teamcity = Environment.GetEnvironmentVariable("teamcity.serverUrl", EnvironmentVariableTarget.User);
             using (var handler = new HttpClientHandler { Credentials = new NetworkCredential(userName, password) })
             using (var client = new HttpClient(handler))
             {
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var response = client.GetAsync(string.Format("{0}/httpAuth/app/rest/builds/id:{1}", teamcity, configuration.TeamcityBuildId)).Result;
+                var response = client.GetAsync(string.Format("{0}/httpAuth/app/rest/builds/id:{1}", configuration.TeamCityServerAddress, configuration.TeamCityBuildId)).Result;
                 var result = response.Content.ReadAsAsync<dynamic>().Result;
 
                 configuration.BuildNumber = configuration.BuildNumber ?? result.number;

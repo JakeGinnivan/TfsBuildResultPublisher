@@ -12,8 +12,8 @@ namespace TfsCreateBuild
         {
             ServicePointManager.ServerCertificateValidationCallback = ((sender, certificate, chain, sslPolicyErrors) => true);
 
-            var userName = Environment.GetEnvironmentVariable("teamcity.auth.userId", EnvironmentVariableTarget.User);
-            var password = Environment.GetEnvironmentVariable("teamcity.auth.password", EnvironmentVariableTarget.User);
+            var userName = Environment.GetEnvironmentVariable("teamcity.auth.userId");
+            var password = Environment.GetEnvironmentVariable("teamcity.auth.password");
             using (var handler = new HttpClientHandler { Credentials = new NetworkCredential(userName, password) })
             using (var client = new HttpClient(handler))
             {
@@ -36,6 +36,7 @@ namespace TfsCreateBuild
                     if (response != null)
                     {
                         Console.WriteLine("Unable to fetch build information from TeamCity");
+                        Console.WriteLine("Username: {0}, Password: {1}", userName, password);
                         Console.WriteLine();
                         Console.WriteLine("Exception:");
                         Console.WriteLine(ex.ToString());

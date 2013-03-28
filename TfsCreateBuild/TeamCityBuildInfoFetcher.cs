@@ -23,11 +23,11 @@ namespace TfsCreateBuild
                     response = client.GetAsync(string.Format("{0}/httpAuth/app/rest/builds/id:{1}", configuration.TeamCityServerAddress, configuration.TeamCityBuildId)).Result;
                     var result = response.Content.ReadAsAsync<dynamic>().Result;
 
-                    configuration.BuildNumber = configuration.BuildNumber ?? result.number;
-                    configuration.BuildStatus = configuration.BuildStatus ?? ToTfsStatus(result.status);
-                    configuration.BuildDefinition = configuration.BuildDefinition ?? result.buildType.name;
-                    configuration.StartTime = configuration.StartTime ?? ToDateTimeFromIsoDate(result.startDate);
-                    configuration.FinishTime = configuration.FinishTime ?? ToDateTimeFromIsoDate(result.finishDate);
+                    configuration.BuildNumber = configuration.BuildNumber ?? (string)result.number;
+                    configuration.BuildStatus = configuration.BuildStatus ?? ToTfsStatus((string)result.status);
+                    configuration.BuildDefinition = configuration.BuildDefinition ?? (string)result.buildType.name;
+                    configuration.StartTime = configuration.StartTime ?? ToDateTimeFromIsoDate((string)result.startDate);
+                    configuration.FinishTime = configuration.FinishTime ?? ToDateTimeFromIsoDate((string)result.finishDate);
                 }
                 catch (Exception ex)
                 {
@@ -56,7 +56,7 @@ namespace TfsCreateBuild
         {
             switch (status)
             {
-                case "SUCCESS/FAILURE/ERROR":
+                case "SUCCESS":
                     return "Succeeded";
                 case "FAILURE":
                 case "ERROR":

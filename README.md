@@ -22,6 +22,10 @@ You can create "faked" builds on the command line using the following tool.
     -p, --project=VALUE              The team project
     -b, --builddefinition=VALUE      The build definition
     -n, --buildnumber=VALUE          The build number to assign the build
+        --teamcityBuildId=VALUE      The TeamCity build id to take startTime, endTime, buildnumber from
+        --teamcityServer=VALUE       Url of your teamcity server
+        --teamcityUserId=VALUE       Username to connect with (if in teamcity build use system.teamcity.auth.userId)
+        --teamcityPassword=VALUE     Password to connect with (if in teamcity build use system.teamcity.auth.password)
     -s, --status=VALUE               Status of the build  (Succeeded, Failed, Stopped, PartiallySucceeded, default: Succeeded)
     -f, --flavor=VALUE               Flavor of the build (to track test results against, default: Debug)
     -l, --platform=VALUE             Platform of the build (to track test results against, AnyCPU)

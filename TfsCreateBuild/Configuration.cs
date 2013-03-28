@@ -29,5 +29,7 @@ namespace TfsCreateBuild
         public bool FixTestIds { get; set; }
         public string TeamCityBuildId { get; set; }
         public string TeamCityServerAddress { get; set; }
+        public string TeamCityUserId { get; set; }
+        public string TeamCityPassword { get; set; }
     }
 }

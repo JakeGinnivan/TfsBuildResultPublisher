@@ -21,7 +21,7 @@ namespace TfsCreateBuild
         public string BuildController { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? FinishTime { get; set; }
-        public bool PublishTestRun1 { get; set; }
+        public bool PublishTestRun { get; set; }
         public int? TestSuiteId { get; set; }
         public int? TestConfigId { get; set; }
         public string TestRunTitle { get; set; }
@@ -31,5 +31,9 @@ namespace TfsCreateBuild
         public string TeamCityServerAddress { get; set; }
         public string TeamCityUserId { get; set; }
         public string TeamCityPassword { get; set; }
+
+        public string TfsUsername { get; set; }
+        public string TfsPassword { get; set; }
+        public string TfsDomain { get; set; }
     }
 }

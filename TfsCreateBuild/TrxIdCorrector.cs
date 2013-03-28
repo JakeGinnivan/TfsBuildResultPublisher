@@ -25,7 +25,8 @@ namespace TfsCreateBuild
                 var className = testMethod.Attribute("className");
                 var name = testMethod.Attribute("name");
                 var id = new Guid(unitTest.Attribute("id").Value);
-                replaceList.Add(id, CalcProperGuid(className.Value + "." + name.Value));
+                if (replaceList.ContainsKey(id))
+                    replaceList.Add(id, CalcProperGuid(className.Value + "." + name.Value));
             }
 
             trx = replaceList.Aggregate(trx, (current, replacement) => current.Replace(replacement.Key.ToString(), replacement.Value.ToString()));

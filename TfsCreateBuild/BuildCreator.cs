@@ -63,6 +63,7 @@ namespace TfsCreateBuild
 
             if (string.IsNullOrEmpty(_configuration.Collection) || string.IsNullOrEmpty(_configuration.Project) || string.IsNullOrEmpty(_configuration.BuildDefinition) || string.IsNullOrEmpty(_configuration.BuildNumber))
             {
+                ShowMissingArgsIfNeeded();
                 ShowHelp(p);
                 return 1;
             }
@@ -70,6 +71,23 @@ namespace TfsCreateBuild
             AddBuild(_configuration.Collection, _configuration.Project, _configuration.BuildDefinition, _configuration.BuildNumber, _configuration);
             Console.WriteLine("Build added.");
             return 0;
+
+        private void ShowMissingArgsIfNeeded()
+        {
+            if (string.IsNullOrEmpty(_configuration.Collection) &&
+                string.IsNullOrEmpty(_configuration.Project) &&
+                string.IsNullOrEmpty(_configuration.BuildDefinition) &&
+                string.IsNullOrEmpty(_configuration.BuildNumber))
+                return;
+
+            if (string.IsNullOrEmpty(_configuration.Collection))
+                Console.WriteLine("collection not specified");
+            if (string.IsNullOrEmpty(_configuration.Project))
+                Console.WriteLine("project not specified");
+            if (string.IsNullOrEmpty(_configuration.BuildDefinition))
+                Console.WriteLine("buildDefinition not specified");
+            if (string.IsNullOrEmpty(_configuration.BuildNumber))
+                Console.WriteLine("buildNumber not specified");
         }
 
         void ShowHelp(OptionSet p)

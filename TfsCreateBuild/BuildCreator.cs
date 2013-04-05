@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using Microsoft.TeamFoundation.Build.Client;
 using Microsoft.TeamFoundation.Client;
 using NDesk.Options;
@@ -71,6 +72,7 @@ namespace TfsCreateBuild
             AddBuild(_configuration.Collection, _configuration.Project, _configuration.BuildDefinition, _configuration.BuildNumber, _configuration);
             Console.WriteLine("Build added.");
             return 0;
+        }
 
         private void ShowMissingArgsIfNeeded()
         {
@@ -151,8 +153,19 @@ namespace TfsCreateBuild
             if (_configuration.TestConfigId == null)
                 throw new ArgumentException("/testConfigId must be specified when publishing test results");
 
+            string trxPath = Path.Combine(
+                Path.GetDirectoryName(_configuration.TestResults),
+                Path.GetFileNameWithoutExtension(_configuration.TestResults) + "_TestRunPublish.trx");
+
+            Console.WriteLine("Taken copy of results file to update for publish ({0})", trxPath);
+            File.Copy(_configuration.TestResults, trxPath);
+
             if (_configuration.FixTestIds)
-                TrxIdCorrector.FixTestIdsInTrx(_configuration.TestResults);
+                TrxIdCorrector.FixTestIdsInTrx(trxPath);
+
+            var fixedFile = Regex.Replace(File.ReadAllText(trxPath), "TestRun id=\".{36}\"",
+                          string.Format("TestRun id=\"{0}\"", Guid.NewGuid().ToString()));
+            File.WriteAllText(trxPath, fixedFile);
 
             var paths = new[]
                 {
@@ -166,13 +179,13 @@ namespace TfsCreateBuild
                                       "/collection:\"{3}\" /teamproject:\"{4}\" " +
                                       "/build:\"{5}\" /builddefinition:\"{6}\" /resultowner:\"{7}\"{8}";
             var args = string.Format(argsFormat, _configuration.TestSuiteId,
-                _configuration.TestConfigId, _configuration.TestResults, _configuration.Collection, _configuration.Project, _configuration.BuildNumber, _configuration.BuildDefinition,
+                _configuration.TestConfigId, trxPath, _configuration.Collection, _configuration.Project, _configuration.BuildNumber, _configuration.BuildDefinition,
                 _configuration.TestRunResultOwner ?? Environment.UserName,
                 string.IsNullOrEmpty(_configuration.TfsUsername) ? string.Empty : string.Format(" /login:{0}\\{1},{2}", _configuration.TfsDomain, _configuration.TfsUsername, _configuration.TfsPassword));
 
             //Optionally override title
             if (!string.IsNullOrEmpty(_configuration.TestRunTitle))
-                args += " /title:" + _configuration.TestRunTitle;
+                args += " /title:\"" + _configuration.TestRunTitle + "\"";
 
             string stdOut;
             string stdErr;

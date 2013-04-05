@@ -16,21 +16,27 @@ namespace TfsCreateBuild
             var trx = File.ReadAllText(testResults);
 
             var replaceList = new Dictionary<Guid, Guid>();
+            var storageReplace = new Dictionary<string, string>();
 
             var doc = XDocument.Load(testResults);
             var unitTests = doc.Descendants(XName.Get("TestRun", ns)).Descendants(XName.Get("TestDefinitions", ns)).Single().Descendants(XName.Get("UnitTest", ns));
             foreach (var unitTest in unitTests)
             {
                 var testMethod = unitTest.Descendants(XName.Get("TestMethod", ns)).Single();
+                var storage = unitTest.Attribute("storage").Value;
+                if (!storageReplace.ContainsKey(storage))
+                    storageReplace.Add(storage, Path.GetFileName(storage));
+
                 var className = testMethod.Attribute("className");
                 var name = testMethod.Attribute("name");
                 var id = new Guid(unitTest.Attribute("id").Value);
-                if (replaceList.ContainsKey(id))
+                if (!replaceList.ContainsKey(id))
                     replaceList.Add(id, CalcProperGuid(className.Value + "." + name.Value));
             }
 
             trx = replaceList.Aggregate(trx, (current, replacement) => current.Replace(replacement.Key.ToString(), replacement.Value.ToString()));
-
+            trx = storageReplace.Aggregate(trx, (current, replacement) => current.Replace(replacement.Key.ToString(), replacement.Value.ToString()));
+            
             File.WriteAllText(testResults, trx);
         }
 

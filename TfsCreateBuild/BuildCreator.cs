@@ -187,6 +187,8 @@ namespace TfsCreateBuild
             if (!string.IsNullOrEmpty(_configuration.TestRunTitle))
                 args += " /title:\"" + _configuration.TestRunTitle + "\"";
 
+            Console.WriteLine("Launching tcm.exe {0}", args);
+
             string stdOut;
             string stdErr;
             var processStartInfo = new ProcessStartInfo(tcm, args)
@@ -221,6 +223,8 @@ namespace TfsCreateBuild
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true
             };
+            Console.WriteLine("Launching mstest.exe {0}", args);
+
             Process.Start(processStartInfo).InputAndOutputToEnd(string.Empty, out stdOut, out stdErr);
             Console.Write(stdOut);
             Console.Write(stdErr);

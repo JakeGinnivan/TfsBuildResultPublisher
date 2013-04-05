@@ -26,8 +26,6 @@ namespace TfsCreateBuild
                     configuration.BuildNumber = configuration.BuildNumber ?? (string)result.number;
                     configuration.BuildStatus = configuration.BuildStatus ?? ToTfsStatus((string)result.status);
                     configuration.BuildDefinition = configuration.BuildDefinition ?? (string)result.buildType.name;
-                    configuration.StartTime = configuration.StartTime ?? ToDateTimeFromIsoDate((string)result.startDate);
-                    configuration.FinishTime = configuration.FinishTime ?? ToDateTimeFromIsoDate((string)result.finishDate);
                 }
                 catch (Exception ex)
                 {

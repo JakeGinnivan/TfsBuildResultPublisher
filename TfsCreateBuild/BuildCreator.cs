@@ -37,8 +37,6 @@ namespace TfsCreateBuild
                     {"serverpath=", "Version Control path for solution file. (e.g. $/Solution.sln)", v => _configuration.ServerPath = v},
                     {"droplocation=", @"Location where builds are dropped (default: \\server\drops\)", v => _configuration.DropPath = v},
                     {"buildlog=", @"Location of build log file. (e.g. \\server\folder\build.log)", v => _configuration.BuildLog = v },
-                    {"startTime=", @"The Start Time of the build. (default: now)", v => _configuration.StartTime = DateTime.Parse(v) },
-                    {"finishTime=", @"The Finish Time of the build. (default: now)", v => _configuration.FinishTime = DateTime.Parse(v) },
                     {"testResults=", @"Test results file to publish (*.trx, requires MSTest installed)", v => _configuration.TestResults = v},
                     {"create", "Should the build definition be created if it does not exist", v => _configuration.CreateBuildDefinitionIfNotExists = (v != null)},
                     {"buildController=", @"The name of the build controller to use when creating the build definition (default, first controller)", v => _configuration.BuildController = v},
@@ -101,15 +99,13 @@ namespace TfsCreateBuild
             var buildDetail = definition.CreateManualBuild(buildNumber);
 
             // Create platform/flavor information against which test results can be published
-            configuration.StartTime = configuration.StartTime ?? DateTime.Now;
-            configuration.FinishTime = configuration.FinishTime ?? DateTime.Now;
             configuration.BuildFlavor = configuration.BuildFlavor ?? "Debug";
             configuration.LocalPath = configuration.LocalPath ?? "Solution.sln";
             configuration.BuildPlatform = configuration.BuildPlatform ?? "AnyCPU";
             configuration.ServerPath = configuration.ServerPath ?? "$/Solution.sln";
             configuration.BuildTarget = configuration.BuildTarget ?? "default";
-            var buildProjectNode = buildDetail.Information.AddBuildProjectNode(configuration.FinishTime.Value, configuration.BuildFlavor, configuration.LocalPath, configuration.BuildPlatform,
-                configuration.ServerPath, configuration.StartTime.Value, configuration.BuildTarget);
+            var buildProjectNode = buildDetail.Information.AddBuildProjectNode(configuration.BuildFlavor, configuration.LocalPath, configuration.BuildPlatform,
+                configuration.ServerPath, DateTime.Now, configuration.BuildTarget);
 
             if (!string.IsNullOrEmpty(configuration.DropPath))
                 buildDetail.DropLocation = configuration.DropPath;

@@ -19,8 +19,6 @@ namespace TfsCreateBuild
         public string BuildLog { get; set; }
         public bool CreateBuildDefinitionIfNotExists { get; set; }
         public string BuildController { get; set; }
-        public DateTime? StartTime { get; set; }
-        public DateTime? FinishTime { get; set; }
         public bool PublishTestRun { get; set; }
         public int? TestSuiteId { get; set; }
         public int? TestConfigId { get; set; }

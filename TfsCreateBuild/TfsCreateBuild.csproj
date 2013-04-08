@@ -37,6 +37,12 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac">
+      <HintPath>..\packages\Autofac.3.0.1\lib\net40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Configuration">
+      <HintPath>..\packages\Autofac.3.0.1\lib\net40\Autofac.Configuration.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.TeamFoundation, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <Private>False</Private>
     </Reference>
@@ -77,11 +83,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuildCreator.cs" />
+    <Compile Include="BuildInvoker.cs" />
+    <Compile Include="BuildTestResultPublisher.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="ConfigurationProvider.cs" />
+    <Compile Include="IBuildCreator.cs" />
+    <Compile Include="IBuildInvoker.cs" />
+    <Compile Include="IBuildTestResultPublisher.cs" />
+    <Compile Include="IConfigurationProvider.cs" />
+    <Compile Include="ITeamCityBuildInfoFetch.cs" />
+    <Compile Include="ITfsManualBuildCreator.cs" />
     <Compile Include="ProcessExtensions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TeamCityBuildInfoFetcher.cs" />
+    <Compile Include="TeamCityBuildInfoFetch.cs" />
+    <Compile Include="TestRunPublisher.cs" />
+    <Compile Include="TfsManualBuildCreator.cs" />
     <Compile Include="TrxIdCorrector.cs" />
   </ItemGroup>
   <ItemGroup>

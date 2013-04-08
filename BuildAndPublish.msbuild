@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build;Test" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Root>$(MSBuildProjectDirectory)\</Root>
+    <SolutionPlatform Condition="$(SolutionPlatform) == ''">Any CPU</SolutionPlatform>
+    <Configuration Condition="$(Configuration) == ''">Release</Configuration>
+  </PropertyGroup>
+
+  <Target Name="Cleanup">
+    <Error Condition="$(Root) == ''" Text="Root variable must be defined" />
+
+    <!-- Diagnostics -->
+    <Message Text="Diagnostics:"/>
+    <Message Text="Project root:    $(Root)" />
+    <Message Text="Platform:        $(SolutionPlatform)" />
+    <Message Text="Configuration:   $(Configuration)" />
+
+    <!-- Clean up -->
+    <ItemGroup>
+      <FilesToDelete Include="$(Root)**\bin\**\*.*" />
+      <FilesToDelete Include="$(Root)**\obj\**\*.*" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" ContinueOnError="true" />
+    <RemoveDir Directories="$(Root)TestResults\" />
+  </Target>
+  
+  <Target Name="Build" DependsOnTargets="Cleanup">
+    <MSBuild Projects="$(Root)TfsCreateBuild.sln" Properties="Configuration=$(Configuration);Platform=$(SolutionPlatform)" />
+  </Target>
+
+  <Target Name="Test" DependsOnTargets="Build">
+    <PropertyGroup>
+      <TestProject>$(Root)TestProject\bin\$(Configuration)\TestProject.dll</TestProject>
+    </PropertyGroup>
+
+    <Exec Command="vstest.console.exe &quot;$(TestProject)&quot; /logger:trx /UseVsixExtensions:true" />
+  </Target>
+
+  <Target Name="PublishBuildsResults">
+    <PropertyGroup>
+      <TfsCollection Condition="$(TfsCollection)==''">http://server/tfs/Collection</TfsCollection>
+      <TfsProject Condition="$(TfsProject)==''">TfsProject</TfsProject>
+      <BuildDefinition Condition="$(BuildDefinition)==''">BuildDefinition</BuildDefinition>
+      <TestSuiteId Condition="$(TestSuiteId) == ''">1</TestSuiteId>
+      <TestConfigId Condition="$(TestConfigId) == ''">2</TestConfigId>
+      <TestRunTitle Condition="$(TestRunTitle) == ''">$(BuildDefinition) $(Version)</TestRunTitle>
+      <TestRunOwner Condition="$(TestRunOwner) == ''">$(USERNAME)</TestRunOwner>
+	    <Switch Condition="$(Switch) == ''">create</Switch>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <TestResults Include="$(Root)TestResults\*.trx"/>
+    </ItemGroup>
+
+    <Error Condition="'@(TestResults->Count())' == '0'" Text="No .trx files found" />
+    <Error Condition="'@(TestResults->Count())' != '1'" Text="Multiple .trx files found" />
+
+    <Exec Command="$(Root)TfsCreateBuild\bin\$(Configuration)\TfsCreateBuild.exe --collection=$(TfsCollection) --project=$(TfsProject) --builddefinition=&quot;$(BuildDefinition)&quot; --buildnumber=$(Version) --$(Switch) --platform=$(SolutionPlatform) --flavor=$(Configuration) --testResults=&quot;@(TestResults)&quot; --publishTestRun --fixTestIds --testSuiteId=$(TestSuiteId) --testConfigid=$(TestConfigId) --testRunTitle=&quot;$(TestRunTitle)&quot; --testRunResultOwner=&quot;$(TestRunOwner)&quot;" />
+  </Target>
+</Project>

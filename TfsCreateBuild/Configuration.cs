@@ -29,9 +29,6 @@ namespace TfsCreateBuild
         public string TeamCityServerAddress { get; set; }
         public string TeamCityUserId { get; set; }
         public string TeamCityPassword { get; set; }
-
-        public string TfsUsername { get; set; }
-        public string TfsPassword { get; set; }
-        public string TfsDomain { get; set; }
+        public bool TriggerBuild { get; set; }
     }
 }

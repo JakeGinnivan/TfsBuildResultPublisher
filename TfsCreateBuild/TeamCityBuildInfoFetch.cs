@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Globalization;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
 namespace TfsCreateBuild
 {
-    public class TeamCityBuildInfoFetcher
+    public class TeamCityBuildInfoFetch : ITeamCityBuildInfoFetch
     {
         public void UpdateConfigurationFromTeamCityBuild(Configuration configuration)
         {
@@ -19,7 +18,7 @@ namespace TfsCreateBuild
                 HttpResponseMessage response = null;
                 try
                 {
-                    
+
                     response = client.GetAsync(string.Format("{0}/httpAuth/app/rest/builds/id:{1}", configuration.TeamCityServerAddress, configuration.TeamCityBuildId)).Result;
                     var result = response.Content.ReadAsAsync<dynamic>().Result;
 
@@ -45,11 +44,6 @@ namespace TfsCreateBuild
             }
         }
 
-        private static DateTime ToDateTimeFromIsoDate(string date)
-        {
-            return DateTime.ParseExact(date, @"yyyyMMdd\THHmmsszzzz", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
-        }
-
         private static string ToTfsStatus(string status)
         {
             switch (status)
@@ -63,5 +57,10 @@ namespace TfsCreateBuild
                     return "Succeeded"; // Hrrmm?
             }
         }
+
+        //private static DateTime ToDateTimeFromIsoDate(string date)
+        //{
+        //    return DateTime.ParseExact(date, @"yyyyMMdd\THHmmsszzzz", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+        //}
     }
 }

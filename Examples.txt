@@ -1,0 +1,2 @@
+# On premise when you have permissions to 'Update Builds'
+msbuild /t:Build;Test;PublishBuildsResults /p:TfsCollection=http://server/tfs/Collection /p:TfsProject=MyProject /p:BuildDefinition="Build Def" /p:Version=0.0.0.0

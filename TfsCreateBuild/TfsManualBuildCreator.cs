@@ -54,6 +54,7 @@ namespace TfsCreateBuild
                     throw;
             }
 
+            Console.WriteLine("'{0}' does not exist, trying to create build definition", buildDefinition);
             return CreateBuildDefinition(buildServer, buildController, project, dropLocation, buildDefinition);
         }
 

@@ -30,10 +30,12 @@ namespace TfsCreateBuild
 
             if (configuration.TriggerBuild)
             {
+                Console.WriteLine("Triggering new build of '{0}'", configuration.BuildDefinition);
                 configuration.BuildNumber = _buildInvoker.TriggerBuildAndWaitForCompletion(configuration.Collection, configuration.Project, configuration.BuildDefinition);
             }
             else
             {
+                Console.WriteLine("Creating manual build '{0}'", configuration.BuildDefinition);
                 _manualBuildCreator.CreateManualBuild(
                     configuration.BuildStatus, configuration.Collection, configuration.BuildLog, configuration.DropPath, configuration.BuildFlavor,
                     configuration.LocalPath, configuration.BuildPlatform, configuration.BuildTarget, configuration.Project, configuration.BuildDefinition,

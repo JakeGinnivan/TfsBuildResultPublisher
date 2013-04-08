@@ -37,6 +37,7 @@ namespace TfsCreateBuild
                     {"testResults=", @"Test results file to publish (*.trx, requires MSTest installed)", v => localConfiguration.TestResults = v},
                     {"create", "Should the build definition be created if it does not exist", v => localConfiguration.CreateBuildDefinitionIfNotExists = (v != null)},
                     {"trigger", "Instead of creating a manual build, we should trigger the build", v=>localConfiguration.TriggerBuild = (v != null)},
+                    {"keepForever", "Does the build participates in the retention policy of the build definition or to keep the build forever", v=>localConfiguration.KeepForever = (v != null)},
                     {"buildController=", @"The name of the build controller to use when creating the build definition (default, first controller)", v => localConfiguration.BuildController = v},
                     {"publishTestRun", @"Creates a test run in Test Manager (requires tcm.exe installed)", v => localConfiguration.PublishTestRun = (v != null)},
                     {"fixTestIds", @"If the .trx file comes from VSTest.Console.exe, the testId's will not be recognised by Test Runs (for associated automation)", v => localConfiguration.FixTestIds = (v != null)},

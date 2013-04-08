@@ -39,7 +39,8 @@ namespace TfsCreateBuild
                 _manualBuildCreator.CreateManualBuild(
                     configuration.BuildStatus, configuration.Collection, configuration.BuildLog, configuration.DropPath, configuration.BuildFlavor,
                     configuration.LocalPath, configuration.BuildPlatform, configuration.BuildTarget, configuration.Project, configuration.BuildDefinition,
-                    configuration.CreateBuildDefinitionIfNotExists, configuration.BuildController, configuration.BuildNumber, configuration.ServerPath);
+                    configuration.CreateBuildDefinitionIfNotExists, configuration.BuildController, configuration.BuildNumber, configuration.ServerPath,
+                    configuration.KeepForever);
             }
 
             if (!string.IsNullOrEmpty(configuration.TestResults) && File.Exists(configuration.TestResults))

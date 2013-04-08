@@ -7,7 +7,7 @@ namespace TfsCreateBuild
 {
     public class TfsManualBuildCreator : ITfsManualBuildCreator
     {
-        public void CreateManualBuild(string buildStatus, string collection, string buildLog, string dropPath, string buildFlavour, string localPath, string buildPlatform, string buildTarget, string project, string buildDefinition, bool createBuildDefinitionIfNotExists, string buildController, string buildNumber, string serverPath)
+        public void CreateManualBuild(string buildStatus, string collection, string buildLog, string dropPath, string buildFlavour, string localPath, string buildPlatform, string buildTarget, string project, string buildDefinition, bool createBuildDefinitionIfNotExists, string buildController, string buildNumber, string serverPath, bool keepForever)
         {
             // Get the TeamFoundation Server
             var tfsCollection = TfsTeamProjectCollectionFactory.GetTeamProjectCollection(new Uri(collection));
@@ -21,6 +21,7 @@ namespace TfsCreateBuild
 
             // Create the build detail object
             var buildDetail = definition.CreateManualBuild(buildNumber);
+            buildDetail.KeepForever = keepForever;
 
             // Create platform/flavor information against which test results can be published
             var buildProjectNode = buildDetail.Information.AddBuildProjectNode(buildFlavour, localPath, buildPlatform, serverPath, DateTime.Now, buildTarget);

@@ -1,7 +1,6 @@
 ﻿using System;
-using NDesk.Options;
 
-namespace TfsCreateBuild
+namespace TfsBuildResultPublisher
 {
     public class ConfigurationProvider : IConfigurationProvider
     {

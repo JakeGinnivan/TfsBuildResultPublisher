@@ -7,8 +7,8 @@
     <ProjectGuid>{86FECD29-6A3F-478A-94CB-F4196D744C40}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TfsCreateBuild</RootNamespace>
-    <AssemblyName>TfsCreateBuild</AssemblyName>
+    <RootNamespace>TfsBuildResultPublisher</RootNamespace>
+    <AssemblyName>TfsBuildResultPublisher</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>

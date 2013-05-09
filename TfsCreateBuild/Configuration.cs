@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TfsCreateBuild
+﻿namespace TfsBuildResultPublisher
 {
     public class Configuration
     {

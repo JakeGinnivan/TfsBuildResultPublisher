@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace TfsCreateBuild
+namespace TfsBuildResultPublisher
 {
     public static class ProcessExtensions
     {

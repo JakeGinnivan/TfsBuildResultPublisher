@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace TfsCreateBuild
+namespace TfsBuildResultPublisher
 {
     public interface ITestRunPublisher
     {

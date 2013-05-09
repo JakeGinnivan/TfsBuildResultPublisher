@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
-using Autofac;
 
-namespace TfsCreateBuild
+namespace TfsBuildResultPublisher
 {
     class Program
     {

@@ -1,4 +1,4 @@
-﻿namespace TfsCreateBuild
+﻿namespace TfsBuildResultPublisher
 {
     public interface IBuildInvoker
     {

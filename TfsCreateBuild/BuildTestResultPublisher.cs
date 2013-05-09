@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 
-namespace TfsCreateBuild
+namespace TfsBuildResultPublisher
 {
     public class BuildTestResultPublisher : IBuildTestResultPublisher
     {

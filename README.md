@@ -1,18 +1,13 @@
-TfsCreateBuild
+TfsBuildResultPublisher
 ==============
 
 In TFS it's possible to create "faked" builds, without actually running them. You can read about it in this [blog post](http://blogs.msdn.com/b/jpricket/archive/2010/02/23/creating-fake-builds-in-tfs-build-2010.aspx) by [Jason Prickett](http://social.msdn.microsoft.com/profile/jason%20prickett%20-%20msft/).
 
-Main scenarios are:
-
- - Using a different build tool than TFS Build 
-(by creating faked builds will let you use some of the great TFS features).
- - Creating sample data to show off TFS functionality
-You can create "faked" builds on the command line using the following tool.
+TfsBuildResultPublisher allows you to create a Fake build, and publish test results to both the build in TFS and also a test run into Microsoft Test Manager
 
 ## Syntax/Usage:
 
-    TfsCreateBuild.exe /collection:http://tfsserver:8080/tfs/MyCollection 
+    TfsBuildResultPublisher.exe /collection:http://tfsserver:8080/tfs/MyCollection 
                        /project:TeamProject 
                        /builddefinition:"Daily Build"
                        /buildnumber:"MyApplication_Daily_1.0"

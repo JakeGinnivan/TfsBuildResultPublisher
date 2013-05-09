@@ -99,7 +99,7 @@
     <Compile Include="TeamCityBuildInfoFetch.cs" />
     <Compile Include="TestRunPublisher.cs" />
     <Compile Include="TfsManualBuildCreator.cs" />
-    <Compile Include="TrxIdCorrector.cs" />
+    <Compile Include="TrxFileCorrector.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

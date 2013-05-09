@@ -27,7 +27,7 @@ namespace TfsBuildResultPublisher
             File.Copy(configuration.TestResults, trxPath);
 
             if (configuration.FixTestIds)
-                TrxIdCorrector.FixTestIdsInTrx(trxPath);
+                TrxFileCorrector.FixTestIdsInTrx(trxPath);
 
             var fixedFile = Regex.Replace(File.ReadAllText(trxPath), "TestRun id=\".{36}\"",
                                           string.Format("TestRun id=\"{0}\"", Guid.NewGuid().ToString()));

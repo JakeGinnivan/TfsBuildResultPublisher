@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace TfsBuildResultPublisher
 {
-    class TrxIdCorrector
+    class TrxFileCorrector
     {
         const string Ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
 
@@ -24,11 +24,14 @@ namespace TfsBuildResultPublisher
             var unitTests = doc.Descendants(XName.Get("TestRun", Ns)).Descendants(XName.Get("TestDefinitions", Ns)).Single().Descendants(XName.Get("UnitTest", Ns));
             foreach (var unitTest in unitTests)
             {
+                //Storage attribute from VSTest.Console is fully qualified, i.e c:\foo\bar.dll, but tcm requires just bar.dll
                 var testMethod = unitTest.Descendants(XName.Get("TestMethod", Ns)).Single();
                 var storage = unitTest.Attribute("storage").Value;
                 if (!storageReplace.ContainsKey(storage))
                     storageReplace.Add(storage, Path.GetFileName(storage));
 
+                //VSTest.Console.exe generates random Guids for test Ids, we need to generate a guid based on the test name using the same
+                // algorithm as MSTest
                 var className = testMethod.Attribute("className");
                 var name = testMethod.Attribute("name");
                 var id = new Guid(unitTest.Attribute("id").Value);
@@ -58,9 +61,10 @@ namespace TfsBuildResultPublisher
                 }
             }
         }
-
+        
         static Guid CalcProperGuid(string testName)
         {
+            // Algorithm taken from http://blogs.msdn.com/b/gautamg/archive/2012/01/01/how-to-associate-automation-programmatically.aspx
             var crypto = new SHA1CryptoServiceProvider();
             var bytes = new byte[16];
             Array.Copy(crypto.ComputeHash(Encoding.Unicode.GetBytes(testName)), bytes, bytes.Length);

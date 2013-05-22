@@ -30,7 +30,7 @@ namespace TfsBuildResultPublisher
                 TrxFileCorrector.FixTestIdsInTrx(trxPath);
 
             var fixedFile = Regex.Replace(File.ReadAllText(trxPath), "TestRun id=\".{36}\"",
-                                          string.Format("TestRun id=\"{0}\"", Guid.NewGuid().ToString()));
+                                          string.Format("TestRun id=\"{0}\"", Guid.NewGuid()));
             File.WriteAllText(trxPath, fixedFile);
 
             var paths = new[]

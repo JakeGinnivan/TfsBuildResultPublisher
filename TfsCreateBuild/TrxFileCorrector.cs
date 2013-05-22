@@ -14,14 +14,23 @@ namespace TfsBuildResultPublisher
 
         public static void FixTestIdsInTrx(string testResults)
         {
-            var trx = File.ReadAllText(testResults);
+            var doc = XDocument.Load(testResults);
 
+            File.WriteAllText(testResults, FixTrx(doc));
+        }
+
+        public static string FixTrx(XDocument doc)
+        {
             var replaceList = new Dictionary<Guid, Guid>();
             var storageReplace = new Dictionary<string, string>();
 
-            var doc = XDocument.Load(testResults);
             FixEndDateBeforeStartDate(doc);
-            var unitTests = doc.Descendants(XName.Get("TestRun", Ns)).Descendants(XName.Get("TestDefinitions", Ns)).Single().Descendants(XName.Get("UnitTest", Ns));
+            var trx = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n" + doc;
+            var unitTests =
+                doc.Descendants(XName.Get("TestRun", Ns))
+                    .Descendants(XName.Get("TestDefinitions", Ns))
+                    .Single()
+                    .Descendants(XName.Get("UnitTest", Ns));
             foreach (var unitTest in unitTests)
             {
                 //Storage attribute from VSTest.Console is fully qualified, i.e c:\foo\bar.dll, but tcm requires just bar.dll
@@ -39,10 +48,11 @@ namespace TfsBuildResultPublisher
                     replaceList.Add(id, CalcProperGuid(className.Value + "." + name.Value));
             }
 
-            trx = replaceList.Aggregate(trx, (current, replacement) => current.Replace(replacement.Key.ToString(), replacement.Value.ToString()));
-            trx = storageReplace.Aggregate(trx, (current, replacement) => current.Replace(replacement.Key.ToString(), replacement.Value.ToString()));
-            
-            File.WriteAllText(testResults, trx);
+            trx = replaceList.Aggregate(trx,
+                (current, replacement) => current.Replace(replacement.Key.ToString(), replacement.Value.ToString()));
+            trx = storageReplace.Aggregate(trx,
+                (current, replacement) => current.Replace(replacement.Key.ToString(), replacement.Value.ToString()));
+            return trx;
         }
 
         private static void FixEndDateBeforeStartDate(XDocument doc)

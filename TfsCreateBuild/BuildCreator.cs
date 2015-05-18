@@ -40,7 +40,8 @@ namespace TfsBuildResultPublisher
                     configuration.BuildStatus, configuration.Collection, configuration.BuildLog, configuration.DropPath, configuration.BuildFlavor,
                     configuration.LocalPath, configuration.BuildPlatform, configuration.BuildTarget, configuration.Project, configuration.BuildDefinition,
                     configuration.CreateBuildDefinitionIfNotExists, configuration.BuildController, configuration.BuildNumber, configuration.ServerPath,
-                    configuration.KeepForever);
+                    configuration.KeepForever, configuration.AssociatedChangesetIds, configuration.AssociatedWorkitemIds, configuration.AutoIncludeChangesetWorkItems,
+                    configuration.BuildQueueDisabled);
             }
 
             if (!string.IsNullOrEmpty(configuration.TestResults) && File.Exists(configuration.TestResults))

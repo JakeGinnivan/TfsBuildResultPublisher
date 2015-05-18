@@ -45,6 +45,10 @@ namespace TfsBuildResultPublisher
                     {"testConfigid=", @"The Test Configuration to publish the results of the test run to [tcm /configId]", v => localConfiguration.TestConfigId = int.Parse(v)},
                     {"testRunTitle=", @"The title of the test run [tcm /title]", v => localConfiguration.TestRunTitle = v},
                     {"testRunResultOwner=", @"The result owner of the test run [tcm /resultOwner]", v => localConfiguration.TestRunResultOwner = v},
+                    {"changeSets=", @"The changeset Id's to associate the build with", v => localConfiguration.AssociatedChangesetIds = Array.ConvertAll(v.Split(new[]{','}, StringSplitOptions.RemoveEmptyEntries), int.Parse)},
+                    {"workItems=", @"The workiem Id's to associate the build with", v => localConfiguration.AssociatedWorkitemIds = Array.ConvertAll(v.Split(new[]{','}, StringSplitOptions.RemoveEmptyEntries), int.Parse)},
+                    {"autoAssocChangesetWorkItems=", @"Whether to auto-associate changeset workitems to the build", v => localConfiguration.AutoIncludeChangesetWorkItems = (v !=null)},
+                    {"buildQueueDisabled=", @"Whether the build definition's queue is disabled", v => localConfiguration.BuildQueueDisabled = (v !=null)},
                 };
 
             try

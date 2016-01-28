@@ -29,5 +29,9 @@
         public string TeamCityPassword { get; set; }
         public bool TriggerBuild { get; set; }
         public bool KeepForever { get; set; }
+        public int[] AssociatedChangesetIds { get; set; }
+        public int[] AssociatedWorkitemIds { get; set; }
+        public bool AutoIncludeChangesetWorkItems { get; set; }
+        public bool BuildQueueDisabled { get; set; }
     }
 }

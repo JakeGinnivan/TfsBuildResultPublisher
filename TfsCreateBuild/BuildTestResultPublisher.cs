@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace TfsBuildResultPublisher
 {
@@ -10,10 +11,12 @@ namespace TfsBuildResultPublisher
         {
             var paths = new[]
                 {
+                    @"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\MSTest.exe",
+                    @"C:\Program Files\Microsoft Visual Studio 14.0\Common7\IDE\MSTest.exe",
                     @"C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\MSTest.exe",
                     @"C:\Program Files\Microsoft Visual Studio 11.0\Common7\IDE\MSTest.exe"
                 };
-            var msTest = File.Exists(paths[0]) ? paths[0] : paths[1];
+            var msTest = paths.FirstOrDefault(File.Exists);
             const string argsFormat = "/publish:\"{0}\" /publishresultsfile:\"{1}\" /teamproject:\"{2}\" /publishbuild:\"{3}\" /platform:\"{4}\" /flavor:\"{5}\"";
             var args = string.Format(argsFormat, collection, testResultsFile, project, buildNumber, buildPlatform, buildFlavour);
             string stdOut;
